@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>{% block title %}{% endblock %} :: CUNY SPS IS 211 Blog - Giulia Michieli</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link href="//fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <script src="//use.fontawesome.com/2f57198f21.js"></script>
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+        }
+    </style>
+    {% block head_extra %}{% endblock %}
+</head>
+<body class="bg-dark">
+    <nav class="navbar navbar-dark" style="background: #000;">
+        <a class="navbar-brand" href="/"><i class="fa fa-fw fa-file-text-o"></i>&nbsp;CUNY SPS IS 211 Blog - Giulia Michieli</a>
+        <div class="float-right">
+            <div class="float-left mr-2">
+                {% block navbar_extra %}{% endblock %}
+            </div>
+            {% block auth_links %}
+            {% block register_link %}
+            {% if "auth" not in session %}
+            <a class="btn btn-sm btn-success" href="/register"><i class="fa fa-fw fa-user-plus"></i>Register</a>
+            {% endif %}
+            {% endblock register_link %}
+            {% block login_link %}
+            {% if "auth" in session %}
+            <a class="btn btn-sm btn-info" href="/dashboard"><i class="fa fa-fw fa-dashboard"></i>Dashboard</a>
+            <a class="float-right btn btn-sm btn-warning" href="/logout"><i class="fa fa-fw fa-sign-out"></i>Logout {{ session["auth"]["first_name"]  }} {{ session["auth"]["last_name"] }}</a>
+            {% else %}
+            <a class="float-right btn btn-sm btn-warning" href="/login"><i class="fa fa-fw fa-sign-in"></i>Login</a>
+            {% endif %}
+            {% endblock login_link %}
+            {% endblock auth_links %}
+        </div>
+    </nav>
+    <div class="container">
+        {% if breadcrumbs and breadcrumbs|length > 0 %}        
+        <nav aria-label="breadcrumb" class="my-3">
+            <ol class="breadcrumb text-light" style="background: #000;">
+                {% for crumb in breadcrumbs %}
+                {% if loop.last %}
+                <li class="breadcrumb-item active" aria-current="page">{{ crumb.title }}</li>
+                {% else %}
+                <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.title }}</a></li>
+                {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+        {% endif %}
+        {% if alert %}
+        <div class="alert alert-{{ alert.level }} alert-dismissable fade show sticky-top" style="z-index: 10000;" role="alert">
+            {{ alert.message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
+        {% block page_content %}{% endblock %}
+    </div>
+    <!-- Load jQuery, Popper, Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function(){
+            if ($(".alert.alert-dismissable").length > 0){
+                setTimeout(function(){
+                    $(".alert.alert-dismissable").alert("close");
+                }, 10000);
+            }
+
+            function confirm(el, callback)
+            {
+                bootbox.confirm({
+                    message: el.data("message"),
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'Cancel',
+                            className: 'btn-secondary'
+                        }
+                    },
+                    callback: function(result){
+                        callback(result);
+                    }
+                });
+            }
+
+            $(".delete-btn").on("click", function(e){
+                e.preventDefault();
+                var el = $(this)
+                callback = function(result){
+                    if (result)
+                        el.parent().submit();
+                }
+                confirm(el, callback);
+            });
+        });
+    </script>
+    {% block script_extra %}{% endblock %}
+</body>
+</html>

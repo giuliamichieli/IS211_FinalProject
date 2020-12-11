@@ -1,0 +1,58 @@
+{% extends "layout/base.html" %}
+{% block title %}Home{% endblock %}
+{% block page_content %}
+<div class="row mb-3">
+    <div class="col-md-9 col-sm-12 col-xs-12">
+        {% if posts %}
+        {% for post in posts %}
+        {% if loop.first %}
+        <div class="jumbotron">
+            <div class="d-flex w-100 justify-content-between">
+                <h1 class="display-4"><a href="/post/{{ post.slug }}">{{ post.title }}</a></h1>
+                <span><small class="d-block text-right"><i class="fa fa-fw fa-clock-o"></i>Published {{ post.published_at.strftime('%A, %b %d, %Y') }}{{ "<br/> Updated {}".format(post.updated_at.strftime('%A, %b %d, %Y %I:%M %p'))|safe if post.published_at != post.updated_at else "" }}</small><a href="/category/{{ post.category_name }}" class="badge badge-light float-right">Category: {{ post.category_display_name }}</a></span>
+            </div>
+            <p>
+                By {{ post.author_first_name }} {{ post.author_last_name }}
+            </p>
+            <hr class="my-4">
+            <p class="lead">{{ post.short_content|safe }}</p>
+            <hr class="my-4" />
+            <i class="fa fa-fw fa-link" aria-hidden="true"></i><a href="{{ url_for('get_post', id = post.slug, _external = True) }}">Permalink: {{ url_for('get_post', id = post.slug, _external = True) }}</a>
+        </div>
+        <ul class="list-group list-group-flush">
+        {% else %}
+            <li class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h4 class="mb-1"><a href="/post/{{ post.slug }}">{{ post.title }}</a></h4>
+                    <span><small class="d-block text-right"><i class="fa fa-fw fa-clock-o"></i>Published {{ post.published_at.strftime('%A, %b %d, %Y') }}{{ "<br/> Updated {}".format(post.updated_at.strftime('%A, %b %d, %Y %I:%M %p'))|safe if post.published_at != post.updated_at else "" }}</small><a href="/category/{{ post.category_name }}" class="badge badge-light float-right">Category: {{ post.category_display_name }}</a></span>
+                </div>
+                <p>
+                    By {{ post.author_first_name }} {{ post.author_last_name }}
+                </p>
+                <p class="mb-1">{{ post.short_content|safe }}</p>
+                <hr class="my-4" />
+                <i class="fa fa-fw fa-link" aria-hidden="true"></i><a href="{{ url_for('get_post', id = post.slug, _external = True) }}">Permalink: {{ url_for('get_post', id = post.slug, _external = True) }}</a>
+            </li>
+        {% endif %}
+        {% endfor %}
+        </ul>
+        {% else %}
+        <h1 class="my-5 text-white">This blog doesn't have any posts yet.</h1>
+        {% endif %}
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="card-header sticky-top" style="background-color: #000;">
+                <h4 class="mb-1 text-light">Categories</h4>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for category in categories %}
+                <a href="/category/{{ category.category_name }}" class="list-group-item">{{ category.category_display_name }}</a>
+                {% else %}
+                <li class="list-group-item">No categories found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "layout/base.html" %}
+{% block title %}Register{% endblock %}
+{% block auth_links %}
+    {% block login_link %}{{ super() }}{% endblock login_link %}
+{% endblock auth_links %}
+{% block page_content %}
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12 mt-2 mb-2 mx-auto">
+        {% if alert %}
+        <div class="alert alert-{{ alert.level }} alert-dismissable fade show sticky-top mt-3" style="z-index: 10000;" role="alert">
+            {{ alert.message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
+        <div class="card text-white" style="background-color: #000;">
+            <div class="card-header sticky-top" style="background-color: #000;">
+                <h4 class="mb-1"><i class="fa fa-fw fa-user-circle"></i>&nbsp;Register</h4>
+            </div>
+            <div class="card-body bg-light">
+                <h4 class="text-dark">
+                    Register for an account to create your own posts on this blog!
+                </h4>
+                <form action="/register" method="POST">
+                    <div class="form-group">
+                        <input type="text" class="form-control{{ " is-invalid" if errors and errors.messages.first_name }}" name="first_name" placeholder="First name" required value="{{ errors.input.first_name if errors }}" title="Enter your first name" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.first_name+"</small>")|safe if errors and errors.messages.first_name }}
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control{{ " is-invalid" if errors and errors.messages.last_name }}" name="last_name" placeholder="Last name" required value="{{ errors.input.last_name if errors }}" title="Enter your last name" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.last_name+"</small>")|safe if errors and errors.messages.last_name }}
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control{{ " is-invalid" if errors and errors.messages.email }}" name="email" placeholder="Email address" required value="{{ errors.input.email if errors }}" title="Enter a valid email address" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.email+"</small>")|safe if errors and errors.messages.email }}
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control{{ " is-invalid" if errors and errors.messages.password }}" name="password" placeholder="Create a password" required minlength="8" value="{{ errors.input.password if errors }}" title="Enter a password that contains at least 8 characters" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.password+"</small>")|safe if errors and errors.messages.password }}
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control{{ " is-invalid" if errors and errors.messages.password_confirm }}" name="password_confirm" placeholder="Confirm your password" required minlength="8" value="{{ errors.input.password_confirm if errors }}" title="Enter a password that contains at least 8 characters" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.password_confirm+"</small>")|safe if errors and errors.messages.password_confirm }}
+                    </div>
+                    <button class="btn btn-sm btn-success float-right" type="submit" name="submit"><i class="fa fa-fw fa-check-circle"></i>Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

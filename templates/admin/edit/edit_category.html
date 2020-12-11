@@ -1,0 +1,41 @@
+{% extends "layout/base.html" %}
+{% block title %}Edit Category :: {{ category.category_display_name }}{% endblock %}
+{% block auth_links %}
+    {% block login_link %}{{ super() }}{% endblock login_link %}
+{% endblock auth_links %}
+{% block page_content %}
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12 mt-2 mb-2 mx-auto">
+        {% if alert %}
+        <div class="alert alert-{{ alert.level }} alert-dismissable fade show sticky-top mt-3" style="z-index: 10000;" role="alert">
+            {{ alert.message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
+        <div class="card text-white" style="background-color: #000;">
+            <div class="card-header sticky-top" style="background-color: #000;">
+                <h4 class="mb-1"><i class="fa fa-fw fa-plus-circle"></i>&nbsp;Edit Category</h4>
+            </div>
+            <div class="card-body bg-light">
+                <form action="/category/{{ category.category_name }}/edit" method="POST">
+                    <div class="form-group">
+                        <input type="text" class="form-control{{ " is-invalid" if errors and errors.messages.category_name }}" name="category_name" placeholder="Category name (must be unique)" required value="{{ errors.input.category_name if errors else category.category_name }}" title="Enter a unique category name" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.category_name+"</small>")|safe if errors and errors.messages.category_name }}
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control{{ " is-invalid" if errors and errors.messages.category_display_name }}" name="category_display_name" placeholder="Category display name" required value="{{ errors.input.category_display_name if errors else category.category_display_name }}" title="Enter the category display name" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.category_display_name+"</small>")|safe if errors and errors.messages.category_display_name }}
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control{{ " is-invalid" if errors and errors.messages.category_description }}" name="category_description" placeholder="Category description" required value="{{ errors.input.category_description if errors else category.category_description }}" title="Enter a description of the category" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.category_description+"</small>")|safe if errors and errors.messages.category_description }}
+                    </div>
+                    <button class="btn btn-sm btn-success float-right" type="submit" name="submit"><i class="fa fa-fw fa-save"></i>Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

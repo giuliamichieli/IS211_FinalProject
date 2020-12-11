@@ -1,0 +1,21 @@
+{% extends "layout/base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block page_content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card text-dark bg-light">
+            <div class="card-body p-5">
+                <div class="d-flex w-100 justify-content-between">
+                    <h1 class="display-4">{{ post.title }}</h1>
+                    <span><small class="d-block text-right"><i class="fa fa-fw fa-clock-o"></i>Published {{ post.published_at.strftime('%A, %b %d, %Y %I:%M %p') }}{{ "<br/> Updated {}".format(post.updated_at.strftime('%A, %b %d, %Y %I:%M %p'))|safe if post.published_at.strftime('%A, %b %d, %Y %I:%M %p') != post.updated_at.strftime('%A, %b %d, %Y %I:%M %p') else "" }}</small><a href="/category/{{ post.category_name }}" class="badge badge-light float-right">Category: {{ post.category_display_name }}</a></span>
+                </div>
+                <h6>By {{ post.author_first_name }} {{ post.author_last_name }}</h6>
+                <hr class="my-4" />
+                {{ post.content|safe }}
+                <hr class="my-4" />
+                <i class="fa fa-fw fa-link" aria-hidden="true"></i><a href="{{ url_for('get_post', id = post.slug, _external = True) }}">Permalink: {{ url_for('get_post', id = post.slug, _external = True) }}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

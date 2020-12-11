@@ -1,0 +1,84 @@
+{% extends "layout/base.html" %}
+{% block title %}Blog Dashboard{% endblock %}
+{% block page_content %}
+<div class="row">
+    <div class="col-md-8 col-sm-12 col-xs-12">
+        <div class="card text-white" style="background: #000;">
+            <div class="card-header">
+                <div class="d-flex w-100 justify-content-between">
+                    <span class="mb-1 h4"><i class="fa fa-fw fa-file-text-o"></i>&nbsp;Blog Posts</span>
+                    <a href="/post/add" class="btn btn-sm btn-primary"><i class="fa fa-fw fa-plus-circle"></i>Add Post</a>
+                </div>
+            </div>
+            <div class="card-body p-0 bg-dark">
+                {% if posts %}
+                <table class="table table-striped table-hover table-dark m-0 p-0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" style="width: 65%;">Post Title</th>
+                            <th scope="col">Category</th>
+                            <th scope="col" >Is Published</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                        <tr id="post-{{ post.id }}">
+                            <th scope="row"><a href="/post/{{ post.slug }}" class="text-white">{{ post.title }}</a></th>
+                            <td><a href="/category/{{ post.category_name }}" class="text-white">{{ post.category_display_name }}</a></td>
+                            <td>{{ "Yes" if post.is_published == 1 else "No" }}</td>
+                            <td>
+                                <span class="float-right">
+                                    <a href="/post/{{ post.slug }}/edit">edit</a>&nbsp;&nbsp;
+                                    <a href="/post/{{ post.id }}/delete">delete</a>
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <h5 class="text-center my-2">No blog posts found.</h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="card text-white" style="background: #000;">
+            <div class="card-header">
+                <div class="d-flex w-100 justify-content-between">
+                    <span class="mb-1 h4">Categories</span>
+                    <a href="/category/add" class="btn btn-sm btn-primary"><i class="fa fa-fw fa-plus-circle"></i>Add Category</a>
+                </div>
+            </div>
+            <div class="card-body p-0 bg-dark">
+                {% if categories %}
+                <table class="table table-striped table-hover table-dark m-0 p-0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Category</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                        <tr id="category-{{ category.id }}">
+                            <td><a class="text-white" href="/category/{{ category.category_name }}">{{ category.category_display_name }}</a class="text-white"></td>
+                            <td>
+                                <span class="float-right">
+                                    <a href="/category/{{ category.category_name }}/edit">edit</a>&nbsp;&nbsp;
+                                    <a href="/category/{{ category.id }}/delete">delete</a>
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <h5 class="text-center my-2">No categories found.</h5>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

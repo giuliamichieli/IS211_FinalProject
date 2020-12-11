@@ -1,0 +1,105 @@
+{% extends "layout/base.html" %}
+{% block title %}Add Post{% endblock %}
+{% block head_extra %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.38.0/css/tempusdominus-bootstrap-4.min.css" />
+<link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
+{% endblock %}
+{% block page_content %}
+<div class="row">
+    <div class="col-12 mt-2 mb-2 mx-auto">
+        {% if alert %}
+        <div class="alert alert-{{ alert.level }} alert-dismissable fade show sticky-top mt-3" style="z-index: 10000;" role="alert">
+            {{ alert.message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
+        <div class="card text-white" style="background-color: #000;">
+            <div class="card-header" style="background-color: #000;">
+                <h4 class="mb-1"><i class="fa fa-fw fa-file-text-o"></i>&nbsp;Add Post</h4>
+            </div>
+            <div class="card-body bg-light">
+                <form action="/post/add" method="POST">
+                    <div class="form-group">
+                        <label for="category_id" class="label text-dark">Category</label>
+                        <select class="form-control{{ " is-invalid" if errors and errors.messages.category_id }}" name="category_id" required value="{{ errors.input.category_id if errors }}" />
+                            <option{{ " selected" if not errors }} value="">Category (Select one)</option>
+                            {% if categories %}
+                            {% for category in categories %}
+                            <option{{ " selected" if errors and errors.input.category_id == category.id|string }} value="{{ category.id }}">{{ category.category_display_name }}</option>
+                            {% endfor %}
+                            {% endif %}
+                        </select>
+                        {{ ("<small class=\"text-danger\">"+errors.messages.category_id+"</small>")|safe if errors and errors.messages.category_id }}
+                    </div>
+                    <div class="form-group">
+                        <label for="title" class="label text-dark">Title</label>
+                        <input type="text" class="form-control{{ " is-invalid" if errors and errors.messages.title }}" name="title" placeholder="Post title" required value="{{ errors.input.title if errors }}" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.title+"</small>")|safe if errors and errors.messages.title }}
+                    </div>
+                    <div class="form-group">
+                        <label for="slug" class="label text-dark">Permalink slug</label>
+                        <input type="text" class="form-control{{ " is-invalid" if errors and errors.messages.slug }}" name="slug" placeholder="Permalink slug" required value="{{ errors.input.slug if errors }}" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.slug+"</small>")|safe if errors and errors.messages.slug }}
+                    </div>
+                    <div class="form-group">
+                        <textarea id="content" name="content" style="display: none;">{{ errors.input.content if errors }}</textarea>
+                        <textarea id="short-content" name="short_content" style="display: none;">{{ errors.input.short_content if errors }}</textarea>
+                        <label for="content-body" class="label text-dark">Post content</label>
+                        <div id="content-body" class="form-control{{ " is-invalid" if errors and errors.messages.content }}">{{ errors.input.content|safe if errors }}</div>
+                        {{ ("<small class=\"text-danger\">"+errors.messages.content+"</small>")|safe if errors and errors.messages.content }}
+                    </div>
+                    <div class="form-group">
+                        <label for="publish-at" class="label text-dark">Publish at date</label>
+                        <input type="date" id="publish-at" class="form-control{{ " is-invalid" if errors and errors.messages.published_at }} datetimepicker-input" name="published_at" placeholder="Publish Date" required value="{{ errors.input.published_at if errors }}" data-toggle="datetimepicker" data-target="#publish-at" />
+                        {{ ("<small class=\"text-danger\">"+errors.messages.published_at+"</small>")|safe if errors and errors.messages.published_at }}
+                    </div>
+                    <div class="btn-group float-right">
+                        <button class="btn btn-sm btn-warning" type="submit" name="save" value="save"><i class="fa fa-fw fa-save"></i>Save Post</button>
+                        <button class="btn btn-sm btn-success" type="submit" name="publish" value="publish"><i class="fa fa-fw fa-check"></i>Publish Immediately</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script_extra %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.38.0/js/tempusdominus-bootstrap-4.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        var content_editor = new Quill('#content-body', {
+            placeholder: 'Write post content here',
+            theme: 'snow'
+        });
+
+        content_editor.on('text-change', function() {
+            var html = content_editor.root.innerHTML;
+            $("#content").val(html);
+            
+            if ($("#content-body").find("p:first").length > 0)
+                $("#short-content").val($("#content-body").find("p:first").html());
+        });
+
+        $("input[name='title']").on('change keyup', function(){
+            $("input[name='slug']").val($("input[name='title']").val().toLowerCase().trim().split(' ').join('-'));
+        });
+
+        $(function () {
+            if ($('#publish-at').val() != '')
+                var published_at = moment($('#publish-at').val()).toDate();
+            else
+                var published_at = moment().format('YYYY-MM-DD HH:mm');
+            $('#publish-at').datetimepicker({
+                defaultDate: moment(),
+                date: published_at,
+                format: 'YYYY-MM-DD HH:mm'
+            });
+        });
+    })
+</script>
+{% endblock %}
